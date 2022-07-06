@@ -1,0 +1,39 @@
+---
+- name: Allow incoming ssh connections
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "22"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow incoming ssh connections.
+
+- name: Allow outgoing ssh connections
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    source_port: "22"
+    ctstate: ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing SSH connections.
+
+- name: far iptables
+  include_tasks: far-iptables.yml
+  when: inventory_hostname == "far"
+
+- name: near iptables
+  include_tasks: near-iptables.yml
+  when: inventory_hostname == "near"
+
+- name: change default chains to DROP
+  iptables:
+    chain: "{{ item }}"
+    policy: DROP
+  loop:
+    - INPUT
+    - OUTPUT
+
+- name: save iptables
+  community.general.iptables_state:
+    state: saved
+    path: /etc/iptables/rules.v4

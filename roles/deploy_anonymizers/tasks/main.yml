@@ -1,0 +1,44 @@
+---
+- name: masquerade rule
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    jump: MASQUERADE
+    out_interface: "{{ ansible_default_ipv4.interface }}"
+  become: yes
+
+- name: apt-get update and upgrade
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: apt_update == "True"
+
+- name: enable ipv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: disable ipv6 forwarding
+  sysctl:
+    name: "{{ item }}"
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+
+- name: apt-get install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - curl
+    - iptables-persistent
+
+- name: iptables
+  include_tasks: iptables.yml

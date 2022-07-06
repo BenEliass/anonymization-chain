@@ -1,0 +1,18 @@
+---
+- name: install localhost ansible-galaxy dependencies
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: install galaxy collections
+    shell: ansible-galaxy install -r galaxy-collections.yml
+  ignore_errors: True
+
+- name: Deploy Local Server
+  hosts: server
+  roles:
+  - role: deploy_server
+
+- name: Deploy Anonymizers
+  hosts: chains
+  roles:
+  - role: deploy_anonymizers

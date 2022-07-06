@@ -1,0 +1,28 @@
+---
+- name: Forward traffic to local server
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    destination_port: "443"
+    ctstate: NEW,ESTABLISHED
+    jump: DNAT
+    source: "{{hostvars['far']['ansible_host']}}"
+    comment: Forward traffic to local server
+    to_destination: "{{ sys_public_ip }}:6666"
+  become: yes
+
+- name: Forward port 6666 to 443 near
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    source_port: "6666"
+    ctstate: RELATED,ESTABLISHED
+    jump: DNAT
+    source: "{{ sys_public_ip }}"
+    comment: Forward port 6666 to 443 near.
+    to_destination: "{{hostvars['far']['ansible_host']}}:443"
+  become: yes

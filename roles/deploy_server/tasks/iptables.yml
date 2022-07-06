@@ -1,0 +1,61 @@
+---
+- name: Allow incoming ssh connections
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "22"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow incoming ssh connections.
+
+- name: Allow outgoing ssh connections
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    source_port: "22"
+    ctstate: RELATED,ESTABLISHED
+    jump: ACCEPT
+    comment: Allow outgoing SSH connections.
+
+- name:  exclude ssh forward
+  iptables:
+    table: nat
+    protocol: tcp
+    chain: PREROUTING
+    destination_port: "22"
+    comment:  Block ssh forward
+    jump: ACCEPT
+  become: yes
+
+- name: Forward ALL traffic to app
+  iptables:
+    table: nat
+    chain: PREROUTING
+    jump: DNAT
+    comment: Forward traffic to local server
+    to_destination: "10.10.10.10" # Pre Configured internal IP
+  become: yes
+
+- name: Allow NEW,ESTABLISHED tcp connections
+  iptables:
+    chain: OUTPUT
+    protocol: tcp
+    jump: ACCEPT
+    ctstate: NEW,ESTABLISHED
+    comment: Allow outgoing tcp connections.
+
+- name: Allow RELATED,ESTABLISHED tcp connections
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    jump: ACCEPT
+    ctstate: RELATED,ESTABLISHED
+    comment: Allow RELATED,ESTABLISHED tcp connections.
+
+- name: change default chains to DROP
+  iptables:
+    chain: "{{ item }}"
+    policy: DROP
+  loop:
+    - INPUT
+    - OUTPUT

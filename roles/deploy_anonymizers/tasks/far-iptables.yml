@@ -1,0 +1,12 @@
+---
+- name: Forward traffic to near
+  iptables:
+    table: nat
+    chain: PREROUTING
+    protocol: tcp
+    match: tcp
+    destination_port: "443"
+    jump: DNAT 
+    comment: Forward traffic to near
+    to_destination: "{{hostvars['near']['ansible_host']}}"
+  become: yes
