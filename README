@@ -1,4 +1,4 @@
-General:
+LAB Params:
 
 External Subnet: "192.168.200.X"
 Internal Subnet: "172.16.10.X"
@@ -10,16 +10,16 @@ System IP: "192.168.200.10"
 
 pre-configured internal IP address: "10.10.10.10"
 
-Please explain us the chosen implementation, including its advantages and disadvantages:
+A. Please explain us the chosen implementation, including its advantages and disadvantages:
 
-First, I have been choose the Ansible sulotion mostly because I have some experience using it.
+    First, I have been choose the Ansible sulotion mostly because I have some experience using it.
 
-Ansible designed to use as a configuration managment tool and implament those kind of tasks.
+    Ansible designed to use as a configuration managment tool and implament those kind of tasks.
 
-Regardless my experience I think that the fact most of the tasks has a proper moodules also support this claim.
+    Regardless my experience I think that the fact most of the tasks has a proper moodules also support this claim.
 
-Make the translation somewhere along the proxy chain, and explain why you chose that specific configuration:
+B. Make the translation somewhere along the proxy chain, and explain why you chose that specific configuration:
 
-Iv'e been choose to made the translation outside the LAN (near) because we are using generic port (443) which could be used by our gateway somehow.
+    Iv'e been choose to made the translation outside the LAN (near) because we are using generic port (443) which could be used by our gateway somehow.
 
-But, And it's a big but sometimes thg internet provider block higer ports which could be hard to identify. So it's depand on our network architecture.
+    But, And it's a big but sometimes thg internet provider block higer ports which could be hard to identify. So it's depand on our network architecture.
